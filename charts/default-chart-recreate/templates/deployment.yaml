@@ -1,0 +1,127 @@
+{{- $releaseName := .Release.Name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.fullname" . }}
+  labels:
+{{ include "app.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "app.name" . }}
+      app.kubernetes.io/instance: {{ $releaseName }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "app.name" . }}
+        app.kubernetes.io/instance: {{ $releaseName }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if .Values.vault.enabled }}
+      initContainers:
+        - name: vault-client
+          image: {{ .Values.vault.image }}
+          env:
+          - name: VAULT_ADDRESS
+            value: {{ .Values.vault.url }}
+          - name: VAULT_ROLE_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.vault.secretName }}
+                key: role-id
+          - name: VAULT_SECRET_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.vault.secretName }}
+                key: secret-id
+          - name: VAULT_SECRET_PATH
+            value: {{ .Values.vault.secretPath }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            procMount: Default
+            runAsNonRoot: true
+            runAsUser: 33
+            readOnlyRootFilesystem: true
+          volumeMounts:
+          - mountPath: /data/secrets
+            name: vault
+      {{- end }}
+      serviceAccountName: "{{ .Values.serviceAccountName | default "default" }}"
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.name }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          {{- range $name, $value := .Values.env }}
+          {{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.secretEnv }}
+          {{- range .Values.secretEnv }}
+          - name: {{ .secretEnvName}}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secretName }}
+                key: {{ .secretKeys }}
+          {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          {{ if (or .Values.livenessProbe .Values.readinessProbe) }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- else -}} 
+          livenessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: {{ .Values.service.targetPort }}
+            timeoutSeconds: 3
+          readinessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            successThreshold: 1
+            tcpSocket:
+              port: {{ .Values.service.targetPort }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if and .Values.volumeMounts .Values.volumes }}
+          volumeMounts:
+{{ toYaml .Values.volumeMounts | indent 12 }}             
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      {{- if and .Values.volumeMounts .Values.volumes }}
+      volumes:
+{{ toYaml .Values.volumes | indent 8 }}
+      {{- end }}
