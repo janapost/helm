@@ -9,3 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rolling update option set as default
 - Container name set to service name
 - Ingress support for Kubernetes v1.22+
+
+## [0.2.7] - 2024-10-07
+### Changed
+- Chart API version changed v1 -> v2
