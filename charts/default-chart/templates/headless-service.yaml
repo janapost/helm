@@ -11,7 +11,6 @@ metadata:
 {{ include "app.labels" . | indent 4 }}
 spec:
   clusterIP: None
-  type: {{ .Values.service.type }}
 {{- if .Values.ports }}
   ports:
 {{- end }}
