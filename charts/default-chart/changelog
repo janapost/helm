@@ -13,3 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.7] - 2024-10-07
 ### Changed
 - Chart API version changed v1 -> v2
+
+## [0.3.0] - 2025-01-07
+### Changed
+- Statefullset added

@@ -1,26 +1,13 @@
-{{- if eq .Values.type "Deployment" -}}
+{{- if eq .Values.type "StatefulSet" -}}
 {{- $releaseName := .Release.Name -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "app.fullname" . }}
   labels:
 {{ include "app.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  {{- if .Values.rollingUpdate }}
-  strategy:
-    rollingUpdate:
-      maxSurge: {{ .Values.rollingUpdate.maxSurge }}
-      maxUnavailable: {{  .Values.rollingUpdate.maxUnavailable }}
-    type: RollingUpdate
-  {{- else }}
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-    type: RollingUpdate 
-  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "app.name" . }}

@@ -1,4 +1,5 @@
 replicaCount: 1
+type: Deployment
 
 rollingUpdate:
   maxSurge: 1
