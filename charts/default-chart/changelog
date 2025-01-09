@@ -21,3 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.1] - 2025-01-07
 ### Changed
 - Headless service added for sts deployment
+
+## [0.3.2] - 2025-01-08
+### Changed
+- remove common service on sts deployment
+
+## [0.3.3] - 2025-01-09
+### Changed
+- fix ingress on sts deployment
+

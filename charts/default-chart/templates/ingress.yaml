@@ -32,7 +32,11 @@ spec:
           - path: {{ . }}
             backend:
               service:
+              {{- if eq .Values.type "StatefulSet" -}}
+                name: headless-{{ $fullName }}
+              {{- else }}
                 name: {{ $fullName }}
+              {{- end }}
                 port:
                   number: {{ $targetPort }}
             pathType: Prefix
