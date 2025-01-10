@@ -23,39 +23,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- if .Values.vault.enabled }}
-      initContainers:
-        - name: vault-client
-          image: {{ .Values.vault.image }}
-          env:
-          - name: VAULT_ADDRESS
-            value: {{ .Values.vault.url }}
-          - name: VAULT_ROLE_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.vault.secretName }}
-                key: role-id
-          - name: VAULT_SECRET_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.vault.secretName }}
-                key: secret-id
-          - name: VAULT_SECRET_PATH
-            value: {{ .Values.vault.secretPath }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
-            privileged: false
-            procMount: Default
-            runAsNonRoot: true
-            runAsUser: 33
-            readOnlyRootFilesystem: true
-          volumeMounts:
-          - mountPath: /data/secrets
-            name: vault
-      {{- end }}
       serviceAccountName: "{{ .Values.serviceAccountName | default "default" }}"
       containers:
         - name: {{ .Chart.Name }}
@@ -105,9 +72,11 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if and .Values.volumeMounts .Values.volumes }}
+          {{- if or .Values.volumeClaimTemplates .Values.volumes }}
+          {{- if .Values.volumeMounts }}
           volumeMounts:
 {{ toYaml .Values.volumeMounts | indent 12 }}             
+          {{- end }}
           {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -125,4 +94,8 @@ spec:
       volumes:
 {{ toYaml .Values.volumes | indent 8 }}
       {{- end }}
+  {{- if and .Values.volumeMounts .Values.volumeClaimTemplates }}
+  volumeClaimTemplates:
+{{ toYaml .Values.volumeClaimTemplates | indent 4 }}             
+  {{- end }}
 {{- end }}

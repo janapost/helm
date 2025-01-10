@@ -33,3 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.4] - 2025-01-09
 ### Changed
 - roleback: fix ingress on sts deployment
+
+## [0.3.5] - 2025-01-10
+### Changed
+- fix: dynamic volume on sts
