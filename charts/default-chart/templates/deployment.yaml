@@ -35,39 +35,10 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- if .Values.vault.enabled }}
-      initContainers:
-        - name: vault-client
-          image: {{ .Values.vault.image }}
-          env:
-          - name: VAULT_ADDRESS
-            value: {{ .Values.vault.url }}
-          - name: VAULT_ROLE_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.vault.secretName }}
-                key: role-id
-          - name: VAULT_SECRET_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.vault.secretName }}
-                key: secret-id
-          - name: VAULT_SECRET_PATH
-            value: {{ .Values.vault.secretPath }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
-            privileged: false
-            procMount: Default
-            runAsNonRoot: true
-            runAsUser: 33
-            readOnlyRootFilesystem: true
-          volumeMounts:
-          - mountPath: /data/secrets
-            name: vault
-      {{- end }}
+      securityContext:
+        fsGroup: {{ .Values.fsGroup }}
+        runAsUser: {{ .Values.runAsUser }}
+        runAsGroup: {{ .Values.runAsGroup }}
       serviceAccountName: "{{ .Values.serviceAccountName | default "default" }}"
       containers:
         - name: {{ .Chart.Name }}

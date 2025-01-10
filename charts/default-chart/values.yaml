@@ -14,6 +14,10 @@ imagePullSecrets: []
 nameOverride: "default"
 fullnameOverride: "default"
 
+fsGroup: 65534
+runAsUser: 65534
+runAsGroup: 65534
+
 service:
   type: ClusterIP
   port: 80

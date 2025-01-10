@@ -23,6 +23,11 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      securityContext:
+        fsGroup: {{ .Values.fsGroup }}
+        runAsUser: {{ .Values.runAsUser }}
+        runAsGroup: {{ .Values.runAsGroup }}
+        fsGroupChangePolicy: Always
       serviceAccountName: "{{ .Values.serviceAccountName | default "default" }}"
       containers:
         - name: {{ .Chart.Name }}
