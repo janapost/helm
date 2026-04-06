@@ -3,6 +3,15 @@ entries:
   default-chart:
   - apiVersion: v2
     appVersion: "1.1"
+    created: "2026-04-06T18:22:58.892557633Z"
+    description: Rolling update option set as default
+    digest: 9f7120697b7e88d59ba98538a1973ad93da2458011edd44668652510f4b00a42
+    name: default-chart
+    urls:
+    - https://github.com/janapost/helm/releases/download/default-chart-0.3.7/default-chart-0.3.7.tgz
+    version: 0.3.7
+  - apiVersion: v2
+    appVersion: "1.1"
     created: "2025-01-10T21:23:11.356945916Z"
     description: Rolling update option set as default
     digest: 88f5f1373807ee7652bad38c079cfb384d8d2af06bd52099cb06f9ad11ede1b2
@@ -85,6 +94,15 @@ entries:
   default-chart-recreate:
   - apiVersion: v2
     appVersion: "1.1"
+    created: "2026-04-06T18:22:59.02662751Z"
+    description: recreate update option set as default
+    digest: 7d41066360577ea8653914b999519f08092d45e03ac7bcf6acb747a877ad924e
+    name: default-chart-recreate
+    urls:
+    - https://github.com/janapost/helm/releases/download/default-chart-recreate-0.2.8/default-chart-recreate-0.2.8.tgz
+    version: 0.2.8
+  - apiVersion: v2
+    appVersion: "1.1"
     created: "2024-10-06T19:48:16.195391946Z"
     description: recreate update option set as default
     digest: df28a6173389a84e0466532666e56c571651dcd14503b625bdde12554ab62ad6
@@ -101,4 +119,4 @@ entries:
     urls:
     - https://github.com/janapost/helm/releases/download/default-chart-recreate-0.2.6/default-chart-recreate-0.2.6.tgz
     version: 0.2.6
-generated: "2025-01-10T21:23:11.356982535Z"
+generated: "2026-04-06T18:22:59.026677173Z"
