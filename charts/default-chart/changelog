@@ -41,3 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.6] - 2025-01-10
 ### Changed
 - fix: enable runAsUser option and volume permitions
+
+## [0.3.7] - 2026-04-06
+### Changed
+- Removed default values of configmap
+

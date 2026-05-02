@@ -66,11 +66,8 @@ resources:
 
 configMap:
   enabled: false
-configMapName: 'application.yml: |-'
-configMapYaml:
-  spring:
-    main:
-      banner-mode: off
+configMapName: ""
+configMapYaml: {}
 
 nodeSelector: []
 
