@@ -28,7 +28,7 @@ spec:
         runAsUser: {{ .Values.runAsUser }}
         runAsGroup: {{ .Values.runAsGroup }}
         fsGroupChangePolicy: Always
-      serviceAccountName: "{{ .Values.serviceAccountName | default "default" }}"
+      serviceAccountName: {{ .Values.nameOverride }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.name }}"
@@ -47,6 +47,15 @@ spec:
               secretKeyRef:
                 name: {{ .secretName }}
                 key: {{ .secretKeys }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.secrets }}
+          {{- range $key := .Values.secrets }}
+          - name: {{ $key }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $.Values.nameOverride }}-secret
+                key: {{ $key }}
           {{- end }}
           {{- end }}
           ports:
@@ -77,10 +86,15 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if or .Values.volumeClaimTemplates .Values.volumes }}
-          {{- if .Values.volumeMounts }}
+          {{- if or .Values.secrets (and .Values.volumeMounts .Values.volumes) }}
           volumeMounts:
-{{ toYaml .Values.volumeMounts | indent 12 }}             
+          {{- if and .Values.volumeMounts .Values.volumes }}
+{{ toYaml .Values.volumeMounts | indent 12 }}
+          {{- end }}
+          {{- if .Values.secrets }}
+          - mountPath: /mnt/secrets
+            name: secrets-store
+            readOnly: true
           {{- end }}
           {{- end }}
       {{- with .Values.nodeSelector }}
@@ -95,9 +109,19 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      {{- if and .Values.volumeMounts .Values.volumes }}
+      {{- if or .Values.secrets (and .Values.volumeMounts .Values.volumes) }}
       volumes:
+      {{- if and .Values.volumeMounts .Values.volumes }}
 {{ toYaml .Values.volumes | indent 8 }}
+      {{- end }}
+      {{- if .Values.secrets }}
+      - csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: {{ include "app.fullname" . }}-secret
+        name: secrets-store
+      {{- end }}
       {{- end }}
   {{- if and .Values.volumeMounts .Values.volumeClaimTemplates }}
   volumeClaimTemplates:
