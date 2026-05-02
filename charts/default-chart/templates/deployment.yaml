@@ -41,7 +41,7 @@ spec:
         runAsGroup: {{ .Values.runAsGroup }}
       serviceAccountName: {{ .Values.nameOverride }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ include "app.fullname" . }}
           image: "{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:

@@ -58,7 +58,7 @@ spec:
       {{- end }}
       serviceAccountName: {{ .Values.nameOverride }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ include "app.fullname" . }}
           image: "{{ .Values.image.name }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
