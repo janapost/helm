@@ -1,3 +1,4 @@
+environment: dev1
 replicaCount: 1
 
 
@@ -78,3 +79,5 @@ tolerations: []
 affinity: {}
 
 cronjobs: []
+
+secrets: {}
