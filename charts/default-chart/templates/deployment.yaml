@@ -88,9 +88,9 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if or .Values.secrets (and .Values.volumeMounts .Values.volumes) }}
+          {{- if or .Values.secrets .Values.volumeMounts }}
           volumeMounts:
-          {{- if and .Values.volumeMounts .Values.volumes }}
+          {{- if .Values.volumeMounts  }}
 {{ toYaml .Values.volumeMounts | indent 12 }}
           {{- end }}
           {{- if .Values.secrets }}
