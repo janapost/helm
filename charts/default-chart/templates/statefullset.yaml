@@ -88,8 +88,8 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- if or .Values.secrets .Values.volumeMounts }}
           volumeMounts:
-          {{- if and .Values.volumeMounts  }}
-{{ toYaml .Values.volumeMounts | indent 12 }}
+          {{- if .Values.volumeMounts  }}
+{{ toYaml .Values.volumeMounts | indent 10 }}
           {{- end }}
           {{- if .Values.secrets }}
           - mountPath: /mnt/secrets
