@@ -86,6 +86,13 @@ tolerations: []
 
 affinity: {}
 
+lifecycle:
+  preStop:
+    enabled: true
+    sleep: 15
+
+terminationGracePeriodSeconds: 60
+
 cronjobs: []
 
 secrets: {}

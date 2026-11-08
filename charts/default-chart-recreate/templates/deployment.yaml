@@ -59,6 +59,9 @@ spec:
             name: vault
       {{- end }}
       serviceAccountName: {{ .Values.nameOverride }}
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- end }}
       containers:
         - name: {{ include "app.fullname" . }}
           image: "{{ .Values.image.name }}"
@@ -91,7 +94,7 @@ spec:
           {{- else -}} 
           livenessProbe:
             failureThreshold: 10
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 30
             successThreshold: 1
             tcpSocket:
@@ -99,7 +102,7 @@ spec:
             timeoutSeconds: 3
           readinessProbe:
             failureThreshold: 10
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 30
             successThreshold: 1
             tcpSocket:
@@ -107,6 +110,15 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if and .Values.lifecycle .Values.lifecycle.preStop .Values.lifecycle.preStop.enabled }}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - sleep {{ .Values.lifecycle.preStop.sleep }}
+          {{- end }}
           {{- if or .Values.secrets .Values.volumeMounts }}
           volumeMounts:
           {{- if .Values.volumeMounts }}
